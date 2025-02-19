@@ -30,7 +30,7 @@ app.use(session({
 
 // CORS options
 const corsOptions = {
-    origin: 'http://localhost:5173', // Replace with your frontend URL
+    origin: ['http://localhost:5173', 'https://marketplace-application-backend.onrender.com'], // Allow both local and deployed URLs
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
