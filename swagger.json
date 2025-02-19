@@ -5,7 +5,7 @@
     "description": "API documentation for the Marketplace Application",
     "version": "1.0.0",
     "contact": {
-      "email": "your-email@example.com"
+      "email": "saiguptha2003@gmail.com"
     }
   },
   "servers": [
@@ -20,58 +20,63 @@
   ],
   "paths": {
     "/api/auth/register": {
-      "post": {
-        "tags": ["Authentication"],
-        "summary": "Register a new user",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["username", "password", "email"],
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "example": "johndoe"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "password123"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "john@example.com"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User successfully registered",
+        "post": {
+          "tags": ["Authentication"],
+          "summary": "Register a new user",
+          "requestBody": {
+            "required": true,
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
+                  "required": ["username", "password", "email"],
                   "properties": {
-                    "message": {
+                    "username": {
                       "type": "string",
-                      "example": "User registered successfully"
+                      "example": "johndoe"
+                    },
+                    "password": {
+                      "type": "string",
+                      "example": "password123"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "example": "john@example.com"
                     }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid input or user already exists"
+          "responses": {
+            "201": {
+              "description": "User successfully registered",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "User registered successfully"
+                      },
+                      "userId": {
+                        "type": "string",
+                        "example": "2dd8b5e4-844d-43e2-9551-c4ba805b4ced"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input or user already exists"
+            }
           }
         }
-      }
-    },
+      },
+    
     "/api/auth/login": {
       "post": {
         "tags": ["Authentication"],
@@ -82,11 +87,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["username", "password"],
+                "required": ["email", "password"],
                 "properties": {
-                  "username": {
+                  "email": {
                     "type": "string",
-                    "example": "johndoe"
+                    "example": "john@example.com"
                   },
                   "password": {
                     "type": "string",
@@ -108,6 +113,15 @@
                     "message": {
                       "type": "string",
                       "example": "Login successful"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "username": {
+                          "type": "string",
+                          "example": "johndoe"
+                        }
+                      }
                     }
                   }
                 }
@@ -134,7 +148,7 @@
           }
         }
       }
-    },
+    },  
     "/api/products": {
       "get": {
         "tags": ["Products"],
@@ -147,7 +161,30 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Product"
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "Price": {
+                        "type": "number"
+                      },
+                      "Image URL": {
+                        "type": "string"
+                      },
+                      "Name": {
+                        "type": "string"
+                      },
+                      "Description": {
+                        "type": "string"
+                      },
+                      "userId": {
+                        "type": "string"
+                      },
+                      "productId": {
+                        "type": "string"
+                      }
+                    }
                   }
                 }
               }
@@ -244,7 +281,34 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Product"
+                    "type": "object",
+                    "required": ["productId", "name", "description", "price", "imageUrl", "userId"],
+                    "properties": {
+                      "productId": {
+                        "type": "string",
+                        "example": "prod_123"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "iPhone 13"
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "Latest iPhone model"
+                      },
+                      "price": {
+                        "type": "number",
+                        "example": 999.99
+                      },
+                      "imageUrl": {
+                        "type": "string",
+                        "example": "https://example.com/iphone.jpg"
+                      },
+                      "userId": {
+                        "type": "string",
+                        "example": "user_456"
+                      }
+                    }
                   }
                 }
               }
@@ -267,15 +331,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["productId", "quantity"],
+                "required": ["productId", ""],
                 "properties": {
                   "productId": {
                     "type": "string",
                     "example": "prod_123"
-                  },
-                  "quantity": {
-                    "type": "integer",
-                    "example": 1
                   }
                 }
               }
@@ -354,13 +414,6 @@
           },
           "productId": {
             "type": "string"
-          },
-          "quantity": {
-            "type": "integer"
-          },
-          "orderDate": {
-            "type": "string",
-            "format": "date-time"
           }
         }
       }
