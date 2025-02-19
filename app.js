@@ -1,16 +1,18 @@
-require('dotenv').config(); // Load environment variables from .env file
-
+require('dotenv').config();
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
+const swaggerDocument = require('./swagger.json');
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var session = require('express-session'); // Import express-session
+var session = require('express-session'); 
 const productsRouter = require('./routes/products');
-const cors = require('cors'); // Import the cors package
+const cors = require('cors');
 
-var authRouter = require('./routes/auth'); // Import the auth routes
-var userProductsRouter = require('./routes/userProducts'); // Update the import statement
+var authRouter = require('./routes/auth'); 
+var userProductsRouter = require('./routes/userProducts'); 
 var ordersRouter = require('./routes/orders');
 var app = express();
 
@@ -21,19 +23,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your_secret_key',
     resave: false,
     saveUninitialized: true,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production', // Only use secure in production
-        sameSite: 'none',  // Required for cross-origin cookies
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'none', 
+        maxAge: 24 * 60 * 60 * 1000 
     },
-    proxy: true // Required when behind a proxy (like Render)
+    proxy: true 
 }));
 
-// CORS options
 const corsOptions = {
     origin: [
         'http://localhost:5173',
@@ -45,12 +49,10 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 
-// Use CORS middleware with options
 app.use(cors(corsOptions));
 
 app.use('/api/auth', authRouter);
-app.use('/api/user-products', userProductsRouter); // Use the user products routes under /api/user-products
-app.use('/api/orders', ordersRouter);
+app.use('/api/user-products', userProductsRouter);
 app.use('/api/products', productsRouter);
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the API!' });
