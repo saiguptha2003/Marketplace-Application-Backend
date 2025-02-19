@@ -52,7 +52,7 @@ Frontend: https://marketplace-pactos.netlify.app
 ## 📦 API Documentation
 
     The API is documented using Swagger. You can access the documentation at:
-    https://marketplace-application-backend.onrender.com/api-docs
+[https://marketplace-application-backend.onrender.com/api-docs](https://marketplace-application-backend.onrender.com/api-docs)
 
 ## 🤝 Contributing
 
