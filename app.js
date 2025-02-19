@@ -1,41 +1,69 @@
+require('dotenv').config(); // Load environment variables from .env file
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session'); // Import express-session
+const productsRouter = require('./routes/products');
+const cors = require('cors'); // Import the cors package
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
+var authRouter = require('./routes/auth'); // Import the auth routes
+var userProductsRouter = require('./routes/userProducts'); // Update the import statement
+var ordersRouter = require('./routes/orders');
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
+// Middleware setup
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your_secret_key', 
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } 
+}));
 
-// catch 404 and forward to error handler
+// CORS options
+const corsOptions = {
+    origin: 'http://localhost:5173', // Replace with your frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+};
+
+// Use CORS middleware with options
+app.use(cors(corsOptions));
+
+app.use('/api/auth', authRouter);
+app.use('/api/user-products', userProductsRouter); // Use the user products routes under /api/user-products
+app.use('/api/orders', ordersRouter);
+app.use('/api/products', productsRouter);
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the API!' });
+});
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.status(err.status || 500).json({
+    error: {
+      message: err.message,
+      details: res.locals.error
+    }
+  });
+});
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 module.exports = app;
