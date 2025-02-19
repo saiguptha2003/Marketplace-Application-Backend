@@ -30,7 +30,11 @@ app.use(session({
 
 // CORS options
 const corsOptions = {
-    origin: ['http://localhost:5173', 'https://marketplace-application-backend.onrender.com'], // Allow both local and deployed URLs
+    origin: [
+        'http://localhost:5173',
+        'https://marketplace-application-backend.onrender.com',
+        'https://marketplace-pactos.netlify.app'  // Add the Netlify frontend URL
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 };
