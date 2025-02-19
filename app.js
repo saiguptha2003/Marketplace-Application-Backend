@@ -22,10 +22,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'your_secret_key', 
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } 
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production', // Only use secure in production
+        sameSite: 'none',  // Required for cross-origin cookies
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    },
+    proxy: true // Required when behind a proxy (like Render)
 }));
 
 // CORS options
@@ -33,10 +38,11 @@ const corsOptions = {
     origin: [
         'http://localhost:5173',
         'https://marketplace-application-backend.onrender.com',
-        'https://marketplace-pactos.netlify.app'  
+        'https://marketplace-pactos.netlify.app'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+    credentials: true,
+    optionsSuccessStatus: 200
 };
 
 // Use CORS middleware with options
